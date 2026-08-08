@@ -17,6 +17,7 @@ export interface PlayerSnapshot {
   fishAttemptCount: number;
   salesCount: number;
   golemCount:number;
+  hazardHitCount: number;
 }
 
 const  GIFT_REACTIONS: Record<string,Record<string,string>> = {
@@ -28,6 +29,17 @@ const  GIFT_REACTIONS: Record<string,Record<string,string>> = {
 function getGiftReaction(npcSlug:string,itemSlug:string):string {
   return GIFT_REACTIONS[npcSlug]?.[itemSlug] ?? "Your gift is warmly accepted";
 };
+
+
+const cave_in_messages = [
+  "The ceiling groans and showers you with rock and dust. You stumble back, hurt.",
+  "A support beam gives way behind you. Stone crashes down — you barely get clear in time.",
+  "The tunnel shudders. For a moment, you catch a glimpse of something strange embedded in the rock — a cluster of oddly cubic shapes, almost too perfectly square to be natural. Then the dust settles and it's gone.",
+];
+
+function getCaveInMessage(): string {
+  return cave_in_messages[Math.floor(Math.random() * cave_in_messages.length)];
+}
 
 
 export async function createPlayer(name: string, passwordHash: string): Promise<Player> {
@@ -145,6 +157,11 @@ export async function snapshotPlayer(playerName:string): Promise<PlayerSnapshot 
       [playerName]
     );
 
+    const hazardRes = await client.query(
+      "SELECT COUNT(*) FROM job_events WHERE player_name = $1 AND hazard_hit = true",
+      [playerName]
+    )
+
     await client.query('COMMIT');
     return {
       location_slug: playerRes.rows[0].location_slug,
@@ -154,7 +171,8 @@ export async function snapshotPlayer(playerName:string): Promise<PlayerSnapshot 
       giftCount: Number(giftRes.rows[0].count),
       fishAttemptCount: Number(fishRes.rows[0].count),
       salesCount: Number(salesRes.rows[0].count),
-      golemCount: Number(golemRes.rows[0].count)
+      golemCount: Number(golemRes.rows[0].count),
+      hazardHitCount: Number(hazardRes.rows[0].count)
     
     };
   } catch (err) {
@@ -183,6 +201,13 @@ export async function diffSnapshots(playerName: string, before: PlayerSnapshot, 
       );
       const loc = res.rows[0];
       if (loc) lines.push(`You arrive at ${loc.name}. ${loc.description}`);
+      if(after.location_slug === 'hollow_vein') {
+        const hasTome = after.inventory.some(i => i.item_slug === 'old_tome');
+        if(hasTome) {
+          lines.push("You recall the tome's words about sealed halls beneath this very mine. Perhaps there's something worth digging for here.")
+        }
+      }
+    
     }
 
     if (before.hp !== after.hp) {
@@ -196,7 +221,11 @@ export async function diffSnapshots(playerName: string, before: PlayerSnapshot, 
         );
         const message = res.rows[0]?.death_message ?? "You collapse, your journey at an end.";
         lines.push(message);
-      } else {
+      } else if(after.hazardHitCount > before.hazardHitCount) {
+        lines.push(getCaveInMessage())
+      }
+      
+      else {
         lines.push(delta > 0 ? `You feel better. (+${delta} HP)` : `You take damage. (${delta} HP)`);
       }
     }
