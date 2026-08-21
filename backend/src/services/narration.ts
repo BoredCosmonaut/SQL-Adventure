@@ -56,7 +56,7 @@ export async function narrateLocation(
     const loc = res.rows[0];
     if(loc) lines.push(`You arrive at ${loc.name}. ${loc.description}`);
 
-    if(after.location_slug = 'hollow_vein') {
+    if(after.location_slug === 'hollow_vein') {
         const hasTomme = after.inventory.some(i => i.item_slug === 'old_tome');
         if(hasTomme) {
             lines.push("You recall the tome's words about sealed halls beneath this very mine. Perhaps there's something worth digging for here.");
@@ -65,6 +65,7 @@ export async function narrateLocation(
 
     if(after.location_slug === 'lemnian_catacombs' && isFirstVisit) {
         lines.push("Carved into the far wall, in letters that hurt to look at, a single word: VEKTHANEIROS. You do not know how you know it is a name, but you do.");
+        lines.push("It seems like the sort of thing worth writing down.");
     }
 
     return lines;
@@ -272,7 +273,7 @@ export async function narrateTowerDoor(
   if (!attempt) return [];
  
   return [attempt.correct
-    ? "The word settles into the stone like water into sand. Something vast shifts behind the wall, and the door swings inward. The way into Vekthaneiros is open."
+    ? "The word settles into the stone like water into sand. Something vast shifts behind the wall, and the door swings inward. Beyond is the tower_interior, if you dare step through."
     : "The stone drinks the word and gives nothing back. The door does not move."];
 }
  

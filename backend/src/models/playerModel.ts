@@ -194,3 +194,40 @@ export async function diffSnapshots(
   }
 };
  
+export async function getRetirementSummary(playerName: string) {
+  const client = await gamePool.connect();
+  try {
+    await client.query("BEGIN");
+    await client.query(
+      "SELECT set_config('app.current_player', $1, true)",
+      [playerName]
+    );
+
+    const retRes = await client.query(
+      "SELECT final_score, title_count, retired_at FROM retirements WHERE player_name = $1",
+      [playerName]
+    );
+
+    const titleRes = await client.query(
+      `SELECT t.name, t.description, t.points
+       FROM player_titles pt
+       JOIN titles t ON t.slug = pt.title_slug
+       WHERE pt.player_name = $1
+       ORDER BY pt.earned_at`,
+      [playerName]
+    );
+
+    await client.query("COMMIT");
+
+    return {
+      score: retRes.rows[0]?.final_score ?? 0,
+      retiredAt: retRes.rows[0]?.retired_at ?? null,
+      titles: titleRes.rows,
+    };
+  } catch (err) {
+    await client.query("ROLLBACK");
+    throw err;
+  } finally {
+    client.release();
+  }
+}
