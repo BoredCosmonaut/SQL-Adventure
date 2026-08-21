@@ -27,10 +27,10 @@ export async function registerPlayer(req: Request, res: Response) {
     const player = await createPlayer(name, passwordHash);
 
     req.session.playerName = player.name;
-
+    req.session.retired = false;
     res.json({
       playerName: player.name,
-      message: `Welcome, ${player.name}. Try: SELECT * FROM locations;`,
+      message: `Welcome, ${player.name}. You wake on your family's farm, and there is work to be done. Try: SELECT description FROM locations WHERE slug = 'farm';`,
     });
   } catch (err: any) {
     if (err.code === "23505") {
@@ -66,10 +66,10 @@ export async function loginPlayer(req: Request, res: Response) {
     }
 
     req.session.playerName = player.name;
-
+    req.session.retired = player.retired;
     res.json({
       playerName: player.name,
-      message: `Welcome back, ${player.name}.`,
+      message: `Welcome back, ${player.name}. You pick up where you left off.`,
     });
   } catch (err) {
     console.error(err);

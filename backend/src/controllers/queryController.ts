@@ -8,6 +8,10 @@ export async function runQuery(req: Request, res: Response) {
   if (!playerName) {
     return res.status(401).json({ error: "You must register or log in first." });
   }
+  
+  if (req.session.retired) {
+    return res.status(403).json({ error: "Your story is finished. This character rests." });
+  }
 
   const { sql } = req.body as { sql?: string };
 
@@ -26,7 +30,6 @@ export async function runQuery(req: Request, res: Response) {
     const before = await snapshotPlayer(playerName);
     const  rows  = await runPlayerQuery(playerName, sql);
     const after = await snapshotPlayer(playerName);
-    console.log("BEFORE giftCount:", before?.giftCount, "AFTER giftCount:", after?.giftCount);
 
     const narration = before && after ? await diffSnapshots(playerName, before, after) : [];
 
