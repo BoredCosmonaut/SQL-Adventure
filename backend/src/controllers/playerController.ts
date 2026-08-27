@@ -96,3 +96,37 @@ export async function logoutPlayer(req: Request, res: Response) {
     res.json({ message: "You set your work aside for now." });
   });
 }
+
+export async function getCurrentPlayer(req:Request,res:Response) {
+  const playerName = req.session.playerName;
+
+  if(!playerName){
+    return res.status(401).json({error:'Not logged in'});
+  }
+
+  try {
+    const player = await findPlayer(playerName);
+    if(!player) {
+      req.session.destroy(() =>{});
+      return res.status(401).json({error:'Session no longer valid'});
+    }
+
+    if(player.retired) {
+      const summary = await getRetirementSummary(player.name);
+      return res.json({
+        playerName:player.name,
+        retired:true,
+        message:`${player.name}'s story is finished`,
+        ...summary
+      });
+    }
+
+    res.json({
+      playerName:player.name,
+      message:`Welcome back ${player.name}.`
+    })
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Something went wrong checking your session." });
+  }
+}
