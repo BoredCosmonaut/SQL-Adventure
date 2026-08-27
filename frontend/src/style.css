@@ -1,0 +1,121 @@
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500;600&family=Spectral:ital,wght@0,400;0,500;1,400&display=swap');
+:root {
+  /* the page — deep violet, the storm's colour */
+  --field:       #1E1230;
+  --field-deep:  #150C22;
+
+  /* panels sit on it as near-black wells */
+  --ink:         #0A0910;
+  --shadow:      #0F0D16;
+  --raised:      #17141F;
+
+  /* the machine's voice */
+  --green:       #7FE0A0;
+  --green-dim:   #4A8A62;
+  --green-faint: #2E5540;
+
+  /* the world's voice */
+  --bloom:       #D9C7F0;
+  --bloom-dim:   #8B7BA8;
+
+  /* the world pushing back */
+  --red:         #E05B5B;
+
+  --edge:        #2A2338;
+
+  --mono:    'IBM Plex Mono', ui-monospace, monospace;
+  --display: 'Space Grotesk', system-ui, sans-serif;
+
+  --serif: 'Spectral', Georgia, serif;
+
+  --vellum:       var(--bloom);
+  --vellum-dim:   var(--bloom-dim);
+  --vellum-faint: #6B5D82; 
+
+
+  --amber:     var(--green);
+  --amber-dim: var(--green-dim);
+
+  --rust: var(--red);
+
+  --step-0: 0.8125rem;
+  --step-1: 0.9375rem;
+  --step-2: 1.0625rem;
+  --step-3: 1.375rem;
+  --step-4: 2.25rem;
+
+  --gap:   1rem;
+  --gap-l: 1.5rem;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html, body, #app {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  background: var(--field);
+  color: var(--green);
+  font-family: var(--mono);
+  font-size: var(--step-1);
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 100;
+  background: repeating-linear-gradient(
+    to bottom,
+    rgba(0,0,0,0) 0px,
+    rgba(0,0,0,0) 2px,
+    rgba(0,0,0,0.13) 3px
+  );
+}
+
+button {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+input {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: none;
+}
+input:focus { outline: none; }
+
+:focus-visible {
+  outline: 2px solid var(--green);
+  outline-offset: 2px;
+}
+
+::selection {
+  background: var(--green-dim);
+  color: var(--ink);
+}
+
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--ink); }
+::-webkit-scrollbar-thumb {
+  background: var(--edge);
+  border: 2px solid var(--ink);
+}
+::-webkit-scrollbar-thumb:hover { background: var(--green-faint); }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
