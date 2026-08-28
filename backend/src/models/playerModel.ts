@@ -231,3 +231,18 @@ export async function getRetirementSummary(playerName: string) {
     client.release();
   }
 }
+
+export async function logQuery(playerName:string,sql:string, succeeded:boolean): Promise<void> {
+  const client = await gamePool.connect(); 
+  try {
+    await client.query(
+      "INSERT INTO query_log (player_name, sql_text, succeeded) VALUES ($1, $2, $3)",
+      [playerName, sql, succeeded]
+    );
+  } catch (err) {
+    await client.query("ROLLBACK");
+    console.error("Failed to log query:", err)
+  } finally {
+    client.release()
+  }
+}

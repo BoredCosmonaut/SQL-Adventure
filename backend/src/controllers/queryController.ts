@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { runPlayerQuery, snapshotPlayer, diffSnapshots } from "../models/playerModel";
+import { runPlayerQuery, snapshotPlayer, diffSnapshots,logQuery } from "../models/playerModel";
 import { containsForbiddenSql } from "../utils/sqlGuard";
 
 export async function runQuery(req: Request, res: Response) {
@@ -32,9 +32,10 @@ export async function runQuery(req: Request, res: Response) {
     const after = await snapshotPlayer(playerName);
 
     const narration = before && after ? await diffSnapshots(playerName, before, after) : [];
-
+    await logQuery(playerName, sql, true);
     res.json({ rows, narration });
   } catch (err: any) {
+    await logQuery(playerName, sql, false);
     res.status(400).json({ error: err.message ?? "Your query failed." });
   }
 }
