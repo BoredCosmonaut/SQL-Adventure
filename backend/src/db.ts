@@ -1,10 +1,6 @@
 import {Pool} from 'pg'
 import 'dotenv/config'
 
-console.log('DB USER:', JSON.stringify(process.env.GAME_DB_USER));
-console.log('DB PASS:', JSON.stringify(process.env.GAME_DB_PASSWORD));
-
-
 // This pool always connects as `game_player` -- the low-privilege
 export const gamePool = new Pool({
     host: process.env.PGHOST,

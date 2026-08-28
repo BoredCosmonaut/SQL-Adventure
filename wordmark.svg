@@ -1,0 +1,6 @@
+<svg width="320" height="60" viewBox="0 0 320 60" xmlns="http://www.w3.org/2000/svg">
+  <text x="0" y="24" font-family="'IBM Plex Mono', ui-monospace, monospace" font-size="15" font-weight="500" letter-spacing="1.2" fill="#8B7BA8">SELECT</text>
+  <text x="0" y="52" font-family="'Space Grotesk', system-ui, sans-serif" font-size="30" font-style="italic" fill="#7FE0A0">adventure</text>
+  <text x="172" y="24" font-family="'IBM Plex Mono', ui-monospace, monospace" font-size="15" font-weight="500" letter-spacing="1.2" fill="#8B7BA8">FROM</text>
+  <text x="172" y="52" font-family="'Space Grotesk', system-ui, sans-serif" font-size="30" font-style="italic" fill="#D9C7F0">khargazim</text>
+</svg>

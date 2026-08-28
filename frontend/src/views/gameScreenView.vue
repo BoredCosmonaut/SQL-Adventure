@@ -10,8 +10,13 @@ import { useRouter } from 'vue-router';
 
 
 const router = useRouter()
-const entries = ref<Entry[]>([]);
-let nextId = 1;
+const entries = ref<Entry[]>(
+  player.value?.message
+    ? [{ id: 1, kind: 'narration', text: player.value.message }]
+    : []
+);
+
+let nextId = entries.value.length + 1;
 const latestRows = ref<Record<string,unknown>[]>([]);
 
 async function handleLogout() {
